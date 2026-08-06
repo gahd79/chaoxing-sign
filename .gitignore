@@ -1,0 +1,15 @@
+# 日志（含用户名等个人信息，勿上传）
+sign_log.txt
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# 系统
+.DS_Store
+Thumbs.db
+
+# 本地配置（如果以后加密码配置文件）
+.env
+config.local.*
