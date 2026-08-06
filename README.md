@@ -152,7 +152,7 @@ python chaoxing_sign.py 手机号 密码 --enc 1D0A628CK317F44CCC378M5KD92
 每 N 秒轮询全部课程，检测到签到自动签：
 
 ```bash
-# 每 60 秒检测一次（默认）
+# 电脑挂机：全自动（默认，检测到直接签，无需人工）
 python chaoxing_sign.py 手机号 密码 --monitor
 
 # 每 30 秒检测一次
@@ -161,6 +161,22 @@ python chaoxing_sign.py 手机号 密码 --monitor --interval 30
 # 预置签到码 + 位置，手势/签到码/位置也能全自动
 python chaoxing_sign.py 手机号 密码 --monitor --signcode 0721 --location "34.817,113.516,河南科技大学"
 ```
+
+### 确认模式（适合手机，防止误签）
+
+加 `--confirm` 后：检测到签到会**通知你 + 等待确认**，回车才签，输 `n` 跳过：
+
+```bash
+# 手机 Termux 推荐：检测到签到 → 通知确认 → 签到
+python chaoxing_sign.py 手机号 密码 --monitor --confirm --interval 60
+```
+
+| 场景 | 命令 | 行为 |
+|---|---|---|
+| 电脑挂机 | `--monitor`（不加 confirm） | 检测到直接签，无需人工 |
+| 手机挂机 | `--monitor --confirm` | 检测到 → 通知 + 确认 → 签 |
+
+> 📱 手机端完整部署看 [TERMUX.md](TERMUX.md)。
 
 - `Ctrl+C` 退出
 - 日志写入 `sign_log.txt`，签到成功有提示音
