@@ -48,6 +48,8 @@ git clone https://github.com/HEDBS/chaoxing-sign.git
 cd chaoxing-sign
 ```
 
+> 📱 想跑在**安卓手机**上后台监听？看 [TERMUX.md](TERMUX.md)（Termux 部署教程，支持检测到签到后通知确认）。
+
 ---
 
 ## 🚀 快速开始（手动签到）
