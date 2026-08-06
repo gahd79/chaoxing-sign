@@ -182,6 +182,14 @@ class Signer:
         return None
 
 
+def safe_input(prompt: str = "") -> str:
+    """input 封装: stdin 关闭(EOF)时返回空串而非抛异常"""
+    try:
+        return input(prompt).strip()
+    except EOFError:
+        return ""
+
+
 def do_sign(signer: Signer, act: dict, location: str = "", enc: str = "", sign_code: str = "") -> bool:
     """预签到 + 按类型签到, 返回是否成功"""
     t = TYPES.get(act["otherId"], "未知")
@@ -202,21 +210,30 @@ def do_sign(signer: Signer, act: dict, location: str = "", enc: str = "", sign_c
         # 手势(3)/签到码(5): 需要正确的码, 校验通过后提交
         if not sign_code:
             log("手势/签到码签到需要 --signcode 参数(老师公布的码/手势轨迹编码)")
-            sign_code = input("签到码/手势码: ").strip()
+            sign_code = safe_input("签到码/手势码: ")
+        if not sign_code:
+            log("未提供签到码, 跳过")
+            return False
         msg = signer.sign_with_code(act, sign_code)
     elif act["otherId"] == 4:
         if not location:
             log("位置签到需要 --location '纬度,经度,地址', 如 --location 34.817,113.516,河南科技大学")
-            lat = input("纬度: ").strip()
-            lon = input("经度: ").strip()
-            address = input("详细地址: ").strip()
+            lat = safe_input("纬度: ")
+            lon = safe_input("经度: ")
+            address = safe_input("详细地址: ")
+            if not (lat and lon and address):
+                log("位置参数不完整, 跳过")
+                return False
         else:
             lat, lon, address = location.split(",", 2)
         msg = signer.sign_location(act, lat, lon, address)
     elif act["otherId"] == 2:
         if not enc:
             log("二维码签到需要 --enc 参数(微信扫码抠出 enc)")
-            enc = input("enc: ").strip()
+            enc = safe_input("enc: ")
+        if not enc:
+            log("未提供 enc, 跳过")
+            return False
         lat, lon, address = ("34.817", "113.516", "河南科技大学") if not location \
             else location.split(",", 2)
         msg = signer.sign_qrcode(act, enc, lat, lon, address)
