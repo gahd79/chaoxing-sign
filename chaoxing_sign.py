@@ -230,8 +230,23 @@ def do_sign(signer: Signer, act: dict, location: str = "", enc: str = "", sign_c
     return ok
 
 
-def monitor(signer: Signer, interval: int, location: str, enc: str, sign_code: str) -> None:
-    log(f"监听模式启动, 每 {interval}s 检测 {len(signer.get_courses())} 门课, Ctrl+C 退出")
+def notify(title: str, text: str) -> None:
+    """发送系统通知: Termux 环境用 termux-notification, 其他环境仅打印+响铃"""
+    import shutil
+    if shutil.which("termux-notification"):
+        import subprocess
+        try:
+            subprocess.Popen(["termux-notification", "-t", title, "-c", text],
+                             stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        except Exception:
+            pass
+    print("\a", end="", flush=True)
+
+
+def monitor(signer: Signer, interval: int, location: str, enc: str, sign_code: str,
+            confirm: bool = False) -> None:
+    log(f"监听模式启动, 每 {interval}s 检测 {len(signer.get_courses())} 门课, Ctrl+C 退出"
+        + (" (确认模式: 检测到签到需手动确认)" if confirm else ""))
     signed = set()  # 记录已签活动, 避免重复
     while True:
         try:
@@ -242,6 +257,18 @@ def monitor(signer: Signer, interval: int, location: str, enc: str, sign_code: s
                     act = a
                     break
             if act and act["activeId"] not in signed:
+                t = TYPES.get(act["otherId"], "未知")
+                if confirm:
+                    notify("学习通签到", f"检测到[{t}] {act['name']}，请在 Termux 确认")
+                    log(f"检测到活动: [{t}] {act['name']} —— 回车确认签到, 输入 n 跳过")
+                    try:
+                        ans = input().strip().lower()
+                    except EOFError:
+                        ans = ""
+                    if ans == "n":
+                        log("已跳过该签到")
+                        signed.add(act["activeId"])
+                        continue
                 ok = do_sign(signer, act, location, enc, sign_code)
                 if ok:
                     signed.add(act["activeId"])
@@ -264,11 +291,12 @@ def main() -> None:
     ap.add_argument("--location", default="", help="位置签到: '纬度,经度,地址'")
     ap.add_argument("--enc", default="", help="二维码签到 enc 参数")
     ap.add_argument("--signcode", default="", help="手势/签到码签到的码")
+    ap.add_argument("--confirm", action="store_true", help="确认模式: 检测到签到后需手动确认再签(适合手机Termux)")
     args = ap.parse_args()
 
     signer = Signer(args.phone, args.password)
     if args.monitor:
-        monitor(signer, args.interval, args.location, args.enc, args.signcode)
+        monitor(signer, args.interval, args.location, args.enc, args.signcode, args.confirm)
         return
 
     # 手动模式: 检测一次并签到
