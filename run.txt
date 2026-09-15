@@ -1,0 +1,1 @@
+python chaoxing_sign.py 17754512850 sk20220902 --location "103.87,36.05,兰州大学医学院-杏林楼(城关校区)"

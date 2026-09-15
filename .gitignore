@@ -13,3 +13,4 @@ Thumbs.db
 # 本地配置（如果以后加密码配置文件）
 .env
 config.local.*
+.workbuddy

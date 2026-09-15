@@ -12,7 +12,7 @@
 |---|---|---|
 | 普通签到 | ✅ 全自动 | 无 |
 | 拍照签到 | ✅ 全自动 | 超星云盘根目录放一张 `0.jpg` 或 `0.png` |
-| 位置签到 | ⚠️ 半自动 | 经纬度 + 地址（`--location`） |
+| 位置签到 | ⚠️ 半自动 | 经度 + 纬度 + 地址（`--location`） |
 | 手势签到 | ⚠️ 半自动 | 手势码（`--signcode`，3×3 九宫格轨迹编码） |
 | 签到码签到 | ⚠️ 半自动 | 老师公布的签到码（`--signcode`） |
 | 二维码签到 | ⚠️ 半自动 | 二维码中的 enc 参数（`--enc`，微信扫码抠出） |
@@ -103,10 +103,11 @@ python chaoxing_sign.py 手机号 密码
 3. 运行：
 
 ```bash
-# 格式: 纬度,经度,地址
-python chaoxing_sign.py 手机号 密码 --location "34.817,113.516,河南科技大学"
+# 格式: 经度,纬度,地址（经度在前，和地图上复制出来的顺序一致）
+python chaoxing_sign.py 手机号 密码 --location "113.516,34.817,河南科技大学"
 ```
 
+> 顺序写反（纬度在前）会被本地直接拦下并提示，不会把非法坐标发给服务端。
 > 教室位置固定的话，这个参数可以一直复用。
 
 ### 4. 手势签到（半自动）
@@ -159,7 +160,7 @@ python chaoxing_sign.py 手机号 密码 --monitor
 python chaoxing_sign.py 手机号 密码 --monitor --interval 30
 
 # 预置签到码 + 位置，手势/签到码/位置也能全自动
-python chaoxing_sign.py 手机号 密码 --monitor --signcode 0721 --location "34.817,113.516,河南科技大学"
+python chaoxing_sign.py 手机号 密码 --monitor --signcode 0721 --location "113.516,34.817,河南科技大学"
 ```
 
 ### 确认模式（适合手机，防止误签）
@@ -235,15 +236,17 @@ python chaoxing_sign.py 手机号 密码 --monitor --signcode 0721
          activeList[0] 满足 status==1 && otherId∈[0,5] 即为有效签到
          otherId: 0=普通/拍照, 2=二维码, 3=手势, 4=位置, 5=签到码
 
-预签到   newsign/preSign → pptSign/analysis(抠code) → pptSign/analysis2
+预签到   newsign/preSign(POST 表单带 ext) → pptSign/analysis(抠code) → pptSign/analysis2
 
 提交     GET mobilelearn.chaoxing.com/pptSign/stuSignajax
          普通:   latitude=-1&longitude=-1&fid=<学校id>&name=<姓名>
-         位置:   address&latitude&longitude&ifTiJiao=1
+         位置:   address&latitude&longitude&ifTiJiao=1&deviceCode&locationResult=<签名定位凭证>
          拍照:   objectId=<云盘文件ID>
          二维码: enc&location={JSON位置}
          手势/签到码: signCode=<码>，必须先过 checkSignCode 校验
 ```
+
+> `--location` 的顺序是 **`经度,纬度,地址`**（经度在前，范围 ±180），与百度/高德地图复制出来的顺序一致。
 
 **踩坑记录**（本项目开发时实测）：
 

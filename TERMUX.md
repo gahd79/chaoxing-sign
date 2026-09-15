@@ -61,7 +61,7 @@ python chaoxing_sign.py 手机号 密码 --monitor --interval 60
 
 # ③ 预置签到码/位置（手势/签到码/位置也能自动）
 python chaoxing_sign.py 手机号 密码 --monitor --confirm \
-  --signcode 0721 --location "34.817,113.516,河南科技大学"
+  --signcode 0721 --location "113.516,34.817,河南科技大学"
 ```
 
 **确认模式的交互**：检测到签到后 Termux 会响铃 + 发系统通知（需装 termux-api，见下），回到 Termux 看到提示：

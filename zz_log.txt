@@ -1,0 +1,21 @@
+﻿FAIL .ref : [safe-delete][SAFE_DELETE_FAIL_CLOSED] {"target":".ref","reason":"trash-failed","detail":"OK D:\\ThePathOfTheStrong\\github\\chaoxing-sign\\.ref"}
+FAIL .ref2 : [safe-delete][SAFE_DELETE_FAIL_CLOSED] {"target":".ref2","reason":"trash-failed","detail":"OK D:\\ThePathOfTheStrong\\github\\chaoxing-sign\\.ref2"}
+FAIL .tmp_ref : [safe-delete][SAFE_DELETE_FAIL_CLOSED] {"target":".tmp_ref","reason":"trash-failed","detail":"OK D:\\ThePathOfTheStrong\\github\\chaoxing-sign\\.tmp_ref"}
+FAIL .tmp_ref2 : [safe-delete][SAFE_DELETE_FAIL_CLOSED] {"target":".tmp_ref2","reason":"trash-failed","detail":"OK D:\\ThePathOfTheStrong\\github\\chaoxing-sign\\.tmp_ref2"}
+absent __pycache__
+absent _probe_out.txt
+absent _err.txt
+absent _ok.txt
+absent _ls.txt
+absent zz_clean_log.txt
+--- remaining ---
+.git
+.workbuddy
+.gitignore
+chaoxing_sign.py
+device_profile.json
+README.md
+run.md
+sign_log.txt
+TERMUX.md
+zz_log.txt
